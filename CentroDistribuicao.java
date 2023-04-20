@@ -95,11 +95,76 @@ public class CentroDistribuicao<rn> {
         return qtdade;
      } 
 
+    //5% aditivo, 25% alcool, 75% gasolina
     public int[] encomendaCombustivel(int qtdade, TIPOPOSTO tipoPosto) 
     { 
-        int[] a = new int[0];
-        return a;
+        int[] aux = new int[4];
+        if(qtdade<=0) {
+            aux[0] = -7;
+            return aux;
+        }
+        double qtAlcool, qtGasolina, qtAditivo;
+        qtAlcool = qtdade*0.125*100;
+        qtGasolina = qtdade*0.7*100;
+        qtAditivo = qtdade*0.05*100;
+        tAditivo *=100;
+        tGasolina *=100;
+        tAlcool1 *=100;
+        tAlcool2 *=100;
+        if(tAlcool1<qtAlcool || tAditivo<qtAditivo || tGasolina<qtGasolina){
+            aux[0] = -21;
+            divide();
+            return aux;
+        }
+        switch(situacao){
+            case NORMAL->{
+                tAlcool1 -= qtAlcool;
+                tAlcool2 -= qtAlcool;
+                tGasolina -= qtGasolina;
+                tAditivo -= qtAditivo;
+            }
+            case SOBRAVISO->{
+                if(tipoPosto==TIPOPOSTO.COMUM){
+                    qtAlcool /=2;
+                    qtGasolina/=2;
+                    qtAditivo /=2;
+                }
+                tAlcool1 -= qtAlcool;
+                tAlcool2 -= qtAlcool;
+                tGasolina -= qtGasolina;
+                tAditivo -= qtAditivo;
+            }
+            case EMERGENCIA->{
+                if(tipoPosto==TIPOPOSTO.COMUM){
+                    aux[0] = -14;
+                    divide();
+                    return aux;
+                }
+                else{
+                    qtAlcool /=2;
+                    qtGasolina/=2;
+                    qtAditivo /=2;
+                    tAlcool1 -= qtAlcool;
+                    tAlcool2 -= qtAlcool;
+                    tGasolina -= qtGasolina;
+                    tAditivo -= qtAditivo;
+                }
+            }
+        }
+        divide();
+        aux[0] = tAditivo;
+        aux[1] = tGasolina;
+        aux[2] = tAlcool1;
+        aux[3] = tAlcool2;
+        return aux;
      } 
+
+     public void divide(){
+        tAlcool1 /=100;
+        tAlcool2 /=100;
+        tGasolina /=100;
+        tAditivo /=100;
+     }
 
     public void verificaAditivo(int valor){
         if(valor>MAX_ADITIVO || valor <=0) 
