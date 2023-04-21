@@ -111,13 +111,13 @@ public class CentroDistribuicao<rn> {
         tGasolina *=100;
         tAlcool1 *=100;
         tAlcool2 *=100;
-        if(tAlcool1<qtAlcool || tAditivo<qtAditivo || tGasolina<qtGasolina){
-            aux[0] = -21;
-            divide();
-            return aux;
-        }
         switch(situacao){
             case NORMAL->{
+                if(combustivelInsuficiente(qtAditivo, qtGasolina, qtAlcool)){
+                    aux[0] = -21;
+                    divide();
+                    return aux;
+                }
                 tAlcool1 -= qtAlcool;
                 tAlcool2 -= qtAlcool;
                 tGasolina -= qtGasolina;
@@ -128,6 +128,11 @@ public class CentroDistribuicao<rn> {
                     qtAlcool /=2;
                     qtGasolina/=2;
                     qtAditivo /=2;
+                }
+                if(combustivelInsuficiente(qtAditivo, qtGasolina, qtAlcool)){
+                    aux[0] = -21;
+                    divide();
+                    return aux;
                 }
                 tAlcool1 -= qtAlcool;
                 tAlcool2 -= qtAlcool;
@@ -144,6 +149,11 @@ public class CentroDistribuicao<rn> {
                     qtAlcool /=2;
                     qtGasolina/=2;
                     qtAditivo /=2;
+                    if(combustivelInsuficiente(qtAditivo, qtGasolina, qtAlcool)){
+                        aux[0] = -21;
+                        divide();
+                        return aux;
+                    }
                     tAlcool1 -= qtAlcool;
                     tAlcool2 -= qtAlcool;
                     tGasolina -= qtGasolina;
@@ -164,6 +174,11 @@ public class CentroDistribuicao<rn> {
         tAlcool2 /=100;
         tGasolina /=100;
         tAditivo /=100;
+     }
+
+     public boolean combustivelInsuficiente(double qtAditivo, double qtGasolina, double qtAlcool){
+        if(tAlcool1<qtAlcool || tAditivo<qtAditivo || tGasolina<qtGasolina) return true;
+        return false;
      }
 
     public void verificaAditivo(int valor){
