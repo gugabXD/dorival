@@ -191,18 +191,18 @@ public class CentroDistribuicao<rn> {
      }
 
     public void verificaAditivo(int valor){
-        if(valor>MAX_ADITIVO || valor <=0) 
+        if(valor>MAX_ADITIVO || valor <0) 
         throw new IllegalArgumentException("Valor inválido para o aditivo!", null);
     }
 
     public void verificaGasolina(int valor){
-        if(valor>MAX_GASOLINA || valor<=0){
+        if(valor>MAX_GASOLINA || valor<0){
             throw new IllegalArgumentException("Valor inválido para a gasolina!", null);
         }
     }
 
     public void verificaAlcool(int a1, int a2){
-        if(a1!=a2 || a1<=0 || 2*a1>MAX_ALCOOL){
+        if(a1!=a2 || a1<0 || 2*a1>MAX_ALCOOL){
             throw new IllegalArgumentException("Valor inválido para o álcool!", null);
         }
     }
