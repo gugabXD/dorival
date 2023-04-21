@@ -62,7 +62,9 @@ public class CentroDistribuicao<rn> {
             defineSituacao();
             return qtDisponivel;
         }
-        tAditivo += qtdade;
+        tAditivo *= 100;
+        tAditivo += qtdade*100;
+        tAditivo /= 100;
         defineSituacao();
         return qtdade;
      } 
@@ -75,7 +77,9 @@ public class CentroDistribuicao<rn> {
             defineSituacao();
             return qtDisponivel;
         }
-        tGasolina += qtdade;
+        tGasolina*=100;
+        tGasolina += qtdade*100;
+        tGasolina /= 100;
         defineSituacao();
         return qtdade;
      } 
@@ -89,8 +93,12 @@ public class CentroDistribuicao<rn> {
             defineSituacao();
             return qtDisponivel;
         }
-        tAlcool1 += qtdade/2;
-        tAlcool2 += qtdade/2;
+        tAlcool1 *=100;
+        tAlcool2 *=100;
+        tAlcool1 += qtdade/2*100;
+        tAlcool2 += qtdade/2*100;
+        tAlcool1 /=100;
+        tAlcool2 /=100;
         defineSituacao();
         return qtdade;
      } 
