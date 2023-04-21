@@ -27,7 +27,8 @@ public class CentroDistribuicao<rn> {
      } 
 
     public void defineSituacao(){ 
-        if(tAditivo >= MAX_ADITIVO*0.5 || tGasolina >= MAX_GASOLINA*0.5 || tAlcool1 >= MAX_ALCOOL*0.25) situacao = SITUACAO.NORMAL;
+        if(tAditivo > MAX_ADITIVO || tGasolina > MAX_GASOLINA || tAlcool1 > MAX_ALCOOL) throw new IllegalArgumentException("O sistema falhou em algum lugar!");
+        else if(tAditivo >= MAX_ADITIVO*0.5 || tGasolina >= MAX_GASOLINA*0.5 || tAlcool1 >= MAX_ALCOOL*0.25) situacao = SITUACAO.NORMAL;
         else if(tAditivo >= MAX_ADITIVO*0.25 || tGasolina >= MAX_GASOLINA*0.25 || tAlcool1 >= MAX_ALCOOL*0.125) situacao = SITUACAO.SOBRAVISO; 
         else situacao = SITUACAO.EMERGENCIA;
     } 
