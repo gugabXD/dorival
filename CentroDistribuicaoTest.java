@@ -1,12 +1,8 @@
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThrows;
-
-import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.CsvSource;
-import org.junit.jupiter.params.provider.EnumSource;
-import org.junit.jupiter.params.provider.ValueSource;
 import org.junit.Test;
+
+import static org.junit.Assert.*;
 
 public class CentroDistribuicaoTest{
     @Test
@@ -94,58 +90,92 @@ public class CentroDistribuicaoTest{
         assertEquals(situacao, res);
     }
 
-    /*@Test
-    public void limiteGasolinaOnPoint50(int quant){
-        CentroDistribuicao cd = new CentroDistribuicao(300, 4000, 1000, 1000);
+    @ParameterizedTest
+    @CsvSource({
+            "52, 100, 100, 100, 1, -14, 0, 0",
+            "52, 100, 100, 100, 2, 98, 81, 96",
+            "100, 300, 10000, 1000, 1, 295, 9930, 987",
+            "100, 300, 10000, 1000, 2, 295, 9930, 987",
+            "100, 200, 4000, 500, 2, 195, 3930, 487",
+            "100, 200, 4000, 500, 1, 197, 3965, 493",
+            "10000, 500, 6000, 1250, 2, -21, 0, 0",
+            "10000, 500, 10000, 1000, 1, -21, 0, 0",
+            "10000, 400, 7000, 1250, 1, -21, 0, 0",
+            "-1, 300, 100, 100, 2, -7, 0, 0",
+    })
+    public void encomendas(int input, int ad, int gas, int al1, int tipoposto, int adres, int gasres, int alres){
+        CentroDistribuicao cd = new CentroDistribuicao(ad, gas, al1, al1);
+        int[] aux;
+        if(tipoposto==1) aux = cd.encomendaCombustivel(input, CentroDistribuicao.TIPOPOSTO.COMUM);
+        else aux = cd.encomendaCombustivel(input, CentroDistribuicao.TIPOPOSTO.ESTRATEGICO);
+        if(adres<0){
+            assertEquals(adres, aux[0]);
+            return;
+        }
+        int[] res = new int[4];
+        res[0] = adres; res[1] = gasres; res[2] = alres; res[3] = alres;
+        assertArrayEquals(res, aux);
+    }
+
+    @Test
+    public void tanquecheioGas(){
+        CentroDistribuicao cd = new CentroDistribuicao(1, 5000, 1, 1);
+        int res = cd.recebeGasolina(50000000);
+        assertEquals(5000, res);
+    }
+    @Test
+    public void tanquecheioAlcool(){
+        CentroDistribuicao cd = new CentroDistribuicao(1, 1, 1000, 1000);
+        int res = cd.recebeAlcool(750);
+        assertEquals(500, res);
+    }
+
+    @Test
+    public void tanquecheioAditivo(){
+        CentroDistribuicao cd = new CentroDistribuicao(400, 1, 1, 1);
+        int res = cd.recebeAditivo(4000);
+        assertEquals(100, res);
+    }
+
+    @Test
+    public void nse(){
+        CentroDistribuicao cd = new CentroDistribuicao(500, 10000, 1250, 1250);
+        cd.encomendaCombustivel(6000, CentroDistribuicao.TIPOPOSTO.ESTRATEGICO);
+        assertEquals(CentroDistribuicao.SITUACAO.SOBRAVISO, cd.getSituacao());
+        cd.encomendaCombustivel(2500, CentroDistribuicao.TIPOPOSTO.ESTRATEGICO);
+        assertEquals(CentroDistribuicao.SITUACAO.EMERGENCIA, cd.getSituacao());
+    }
+
+    @Test
+    public void nsn(){
+        CentroDistribuicao cd = new CentroDistribuicao(500, 10000, 1250, 1250);
+        cd.encomendaCombustivel(6000, CentroDistribuicao.TIPOPOSTO.COMUM);
+        assertEquals(CentroDistribuicao.SITUACAO.SOBRAVISO, cd.getSituacao());
+        cd.recebeAditivo(300);
+        cd.recebeGasolina(200);
+        cd.recebeAlcool(2000);
+        assertEquals(CentroDistribuicao.SITUACAO.NORMAL, cd.getSituacao());
+    }
+
+    @Test
+    public void nes(){
+        CentroDistribuicao cd = new CentroDistribuicao(500, 10000, 1250, 1250);
+        cd.encomendaCombustivel(10000, CentroDistribuicao.TIPOPOSTO.COMUM);
+        assertEquals(CentroDistribuicao.SITUACAO.EMERGENCIA, cd.getSituacao());
+        cd.recebeAditivo(200);
         cd.recebeGasolina(1000);
-        assertEquals(cd.getSituacao(), CentroDistribuicao.SITUACAO.NORMAL);
+        cd.recebeAlcool(1000);
+        assertEquals(CentroDistribuicao.SITUACAO.SOBRAVISO, cd.getSituacao());
     }
 
     @Test
-    public void limiteGasolinaOffPoint50(){
-        CentroDistribuicao cd = new CentroDistribuicao(300, 4000, 1000, 1000);
-        cd.recebeGasolina(999);
-        assertEquals(cd.getSituacao(), CentroDistribuicao.SITUACAO.SOBRAVISO);
+    public void nen(){
+        CentroDistribuicao cd = new CentroDistribuicao(500, 10000, 1250, 1250);
+        cd.encomendaCombustivel(10000, CentroDistribuicao.TIPOPOSTO.COMUM);
+        assertEquals(CentroDistribuicao.SITUACAO.EMERGENCIA, cd.getSituacao());
+        cd.recebeAditivo(500);
+        cd.recebeGasolina(4000);
+        cd.recebeAlcool(2000);
+        assertEquals(CentroDistribuicao.SITUACAO.NORMAL, cd.getSituacao());
     }
-    @Test
-    public void limiteGasolinaOnPoint25(){
-        CentroDistribuicao cd = new CentroDistribuicao(300, 2000, 1000, 1000);
-        cd.recebeGasolina(500);
-        assertEquals(cd.getSituacao(), CentroDistribuicao.SITUACAO.SOBRAVISO);
-    }
-
-    @Test
-    public void limiteGasolinaOffPoint25(){
-        CentroDistribuicao cd = new CentroDistribuicao(300, 2000, 1000, 1000);
-        cd.recebeGasolina(499);
-        assertEquals(cd.getSituacao(), CentroDistribuicao.SITUACAO.EMERGENCIA);
-    }
-
-    @Test
-    public void limiteAditivoOnPoint50(){
-        CentroDistribuicao cd = new CentroDistribuicao(250, 10000, 1000, 1000);
-        cd.recebeAditivo(50);
-        assertEquals(cd.getSituacao(), CentroDistribuicao.SITUACAO.NORMAL);
-    }
-
-    @Test
-    public void limiteAditivoOffPoint50(){
-        CentroDistribuicao cd = new CentroDistribuicao(250, 10000, 1000, 1000);
-        cd.recebeAditivo(49);
-        assertEquals(cd.getSituacao(), CentroDistribuicao.SITUACAO.SOBRAVISO);
-    }
-
-    @Test
-    public void limiteAditivoOnPoint25(){
-        CentroDistribuicao cd = new CentroDistribuicao(125, 10000, 1000, 1000);
-        cd.recebeAditivo(25);
-        assertEquals(cd.getSituacao(), CentroDistribuicao.SITUACAO.SOBRAVISO);
-    }
-
-    @Test
-    public void limiteAditivoOffPoint25(){
-        CentroDistribuicao cd = new CentroDistribuicao(125, 10000, 1000, 1000);
-        cd.recebeAditivo(24);
-        assertEquals(cd.getSituacao(), CentroDistribuicao.SITUACAO.NORMAL);
-    }*/
 }

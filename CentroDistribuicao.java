@@ -171,6 +171,8 @@ public class CentroDistribuicao<rn> {
             }
         }
         divide();
+        // erro no codigo original (nao tinha o definesituacao);
+        defineSituacao();
         aux[0] = tAditivo;
         aux[1] = tGasolina;
         aux[2] = tAlcool1;
