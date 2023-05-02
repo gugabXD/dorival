@@ -13,24 +13,24 @@ public class CentroDistribuicaoTest{
 
     @Test
     public void alcoolInvalido(){
-        assertThrows(IllegalArgumentException.class, () -> new CentroDistribuicao<>(5,70,11,10));
+        assertThrows(IllegalArgumentException.class, () -> new CentroDistribuicao(5,70,11,10));
     }
     @Test
     public void recebeAditivoInvalido(){
         CentroDistribuicao centroDistribuicao = new CentroDistribuicao(5,70,12,12);
-        assertEquals(centroDistribuicao.recebeAditivo(-1),-1);
+        assertEquals(-1, centroDistribuicao.recebeAditivo(-1));
     }
 
     @Test
     public void recebeGasolinaInvalido(){
         CentroDistribuicao centroDistribuicao = new CentroDistribuicao(5,70,12,12);
-        assertEquals(centroDistribuicao.recebeGasolina(-1),-1);
+        assertEquals(-1, centroDistribuicao.recebeGasolina(-1));
     }
 
     @Test
     public void recebeAlcoolInvalido(){
         CentroDistribuicao centroDistribuicao = new CentroDistribuicao(5,70,12,12);
-        assertEquals(centroDistribuicao.recebeAlcool(-1),-1);
+        assertEquals(-1, centroDistribuicao.recebeAlcool(-1));
     }
 
     @ParameterizedTest
@@ -114,7 +114,7 @@ public class CentroDistribuicaoTest{
         }
         int[] res = new int[4];
         res[0] = adres; res[1] = gasres; res[2] = alres; res[3] = alres;
-        assertArrayEquals(res, aux);
+        assertArrayEquals(aux, res);
     }
 
     @Test

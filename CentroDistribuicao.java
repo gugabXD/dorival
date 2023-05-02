@@ -1,213 +1,219 @@
-public class CentroDistribuicao<rn> { 
+public class CentroDistribuicao {
 
-    public enum SITUACAO { NORMAL, SOBRAVISO, EMERGENCIA }
+    public enum SITUACAO {
+        NORMAL,
+        SOBRAVISO,
+        EMERGENCIA
+    }
 
-    public enum TIPOPOSTO { COMUM, ESTRATEGICO } 
+    public enum TIPOPOSTO {
+        COMUM,
+        ESTRATEGICO
+    }
 
-    private int tAditivo, tGasolina, tAlcool1, tAlcool2;
-    private SITUACAO situacao;
-    private TIPOPOSTO tipoposto;
-
-    public static final int MAX_ADITIVO = 500; 
-
-    public static final int MAX_ALCOOL = 2500; 
-
+    public static final int MAX_ADITIVO = 500;
+    public static final int MAX_ALCOOL = 2500;
     public static final int MAX_GASOLINA = 10000;
 
-    public CentroDistribuicao (int tAditivo, int tGasolina, int tAlcool1, int tAlcool2) 
-    { 
-        this.tAditivo = tAditivo;
-        this.tGasolina = tGasolina;
-        this.tAlcool1 = tAlcool1;
-        this.tAlcool2 = tAlcool2;
-        defineSituacao();
-        verificaAditivo(tAditivo);
-        verificaGasolina(tGasolina);
-        verificaAlcool(tAlcool1, tAlcool2);;
-     } 
+    private int tAditivo;
+    private int tGasolina;
+    private int tAlcool1;
+    private int tAlcool2;
+    private SITUACAO situacao;
 
-    public void defineSituacao(){ 
-        if(tAditivo > MAX_ADITIVO || tGasolina > MAX_GASOLINA || tAlcool1 > MAX_ALCOOL) throw new IllegalArgumentException("O sistema falhou em algum lugar!");
-        else if(tAditivo >= MAX_ADITIVO*0.5 && tGasolina >= MAX_GASOLINA*0.5 && tAlcool1 >= MAX_ALCOOL*0.25) situacao = SITUACAO.NORMAL;
-        else if(tAditivo >= MAX_ADITIVO*0.25 && tGasolina >= MAX_GASOLINA*0.25 && tAlcool1 >= MAX_ALCOOL*0.125) situacao = SITUACAO.SOBRAVISO;
-        else situacao = SITUACAO.EMERGENCIA;
-    } 
+    public CentroDistribuicao (int tAditivo, int tGasolina, int tAlcool1, int tAlcool2) {
+        try{
+            if(tAditivo <= MAX_ADITIVO && tAditivo >= 0) this.tAditivo = tAditivo;
+        } catch (Exception e) {
+            System.out.println("O valor do ADITIVO está incorreto, ele deve estar entre 0 e 500!");
+        }
+        try {
+            if(tGasolina <= MAX_GASOLINA && tGasolina >= 0) this.tGasolina = tGasolina;
+        } catch (Exception e) {
+            System.out.println("O valor da GASOLINA está incorreto, ele deve estar entre 0 e 10000!");
+        }
+        try {
+            if(tAlcool1 != tAlcool2);
+        } catch (Exception e) {
+            System.out.println("O valor de ALCOOL 1 e ALCOOL 2 deve ser exatamente o mesmo!");
+        }
+        try {
+            if(tAlcool1 <= (MAX_ALCOOL/2) && tAlcool1 >= 0) this.tAlcool1 = tAlcool1;
+        } catch (Exception e) {
+            System.out.println("O valor do ALCOOL 1 está incorreto, ele deve estar entre 0 e 1250!");
+        }
+        try {
+            if(tAlcool2 < (MAX_ALCOOL/2) && tAlcool2 >= 0) this.tAlcool2 = tAlcool2;
+        } catch (Exception e) {
+            System.out.println("O valor do ALCOOL 2 está incorreto, ele deve estar entre 0 e 1250!");
+        }
+    }
 
-    public SITUACAO getSituacao(){ 
-        return situacao;
-     } 
+    public void defineSituacao() {
+        if ( tAditivo >= (MAX_ADITIVO / 2) &&
+                tGasolina >= (MAX_GASOLINA / 2) &&
+                tAlcool1 >= ((MAX_ALCOOL / 2) / 2) &&
+                tAlcool2 >= ((MAX_ALCOOL / 2) / 2) )
+        { situacao = SITUACAO.NORMAL; }
 
-    public int gettGasolina(){ 
-        return tGasolina;
-     } 
+        if ( tAditivo < (MAX_ADITIVO * 0.25) ||
+                tGasolina < (MAX_GASOLINA * 0.25) ||
+                tAlcool1 < ((MAX_ALCOOL/2) * 0.25) ||
+                tAlcool2 < ((MAX_ALCOOL/2) * 0.25) )
+        { situacao = SITUACAO.EMERGENCIA; }
 
-    public int gettAditivo(){ 
-        return tAditivo;
-     } 
+        if (situacao != SITUACAO.NORMAL && situacao != SITUACAO.EMERGENCIA) {
+            situacao = SITUACAO.SOBRAVISO;
+        }
+    }
 
-    public int gettAlcool1(){ 
-        return tAlcool1;
-     } 
-
-    public int gettAlcool2(){ 
-        return tAlcool2;
-     } 
-
-     //retornam o que puderam armazenar
-
-    public int recebeAditivo(int qtdade) { 
-        if(qtdade<=0) return -1;
-        int qtDisponivel = MAX_ADITIVO-tAditivo;
-        if(qtdade>qtDisponivel) {
-            tAditivo = MAX_ADITIVO;
-            defineSituacao();
-            return qtDisponivel;
+    public int recebeAditivo(int qtdade) {
+        try {
+            if ((tAditivo = tAditivo + qtdade) <= MAX_ADITIVO) {
+                tAditivo = tAditivo + qtdade;
+                defineSituacao();
+                return tAditivo;
+            }
+        } catch (Exception e) {
+            return -1;
         }
         tAditivo *= 100;
         tAditivo += qtdade*100;
         tAditivo /= 100;
         defineSituacao();
         return qtdade;
-     } 
+    }
 
-    public int recebeGasolina(int qtdade) { 
-        if(qtdade<=0) return -1;
-        int qtDisponivel = MAX_GASOLINA-tGasolina;
-        if(qtdade>qtDisponivel){
-            tGasolina = MAX_GASOLINA;
-            defineSituacao();
-            return qtDisponivel;
+    public int recebeGasolina(int qtdade) {
+        try {
+            if ((tGasolina = tGasolina + qtdade) <= MAX_GASOLINA){
+                tGasolina = tGasolina + qtdade;
+                defineSituacao();
+                return tGasolina;
+            }
+        } catch (Exception e) {
+            return -1;
         }
         tGasolina*=100;
         tGasolina += qtdade*100;
         tGasolina /= 100;
         defineSituacao();
         return qtdade;
-     } 
+    }
 
-    public int recebeAlcool(int qtdade) { 
-        if(qtdade<=0) return -1;
-        int qtDisponivel = MAX_ALCOOL - 2*tAlcool1;
-        if(qtdade>qtDisponivel){
-            tAlcool1 = MAX_ALCOOL/2;
-            tAlcool2 = MAX_ALCOOL/2;
+    public int recebeAlcool(int qtdade) {
+        int metadeQtdade = qtdade / 2;
+        try {
+            if (((tAlcool1 + tAlcool2) + qtdade) <= MAX_ALCOOL)
+                tAlcool1 = tAlcool1 + metadeQtdade;
+            tAlcool2 = tAlcool2 + metadeQtdade;
             defineSituacao();
-            return qtDisponivel;
+        } catch (Exception e) {
+            return -1;
         }
-        tAlcool1 *=100;
-        tAlcool2 *=100;
-        tAlcool1 += qtdade/2*100;
-        tAlcool2 += qtdade/2*100;
-        tAlcool1 /=100;
-        tAlcool2 /=100;
-        defineSituacao();
-        return qtdade;
-     } 
+        int totalAlcool = tAlcool1 + tAlcool2;
+        return totalAlcool;
+    }
 
-    //5% aditivo, 25% alcool, 75% gasolina
-    public int[] encomendaCombustivel(int qtdade, TIPOPOSTO tipoPosto) 
-    { 
-        int[] aux = new int[4];
-        if(qtdade<=0) {
-            aux[0] = -7;
-            return aux;
+    public int[] encomendaCombustivel(int qtdade, TIPOPOSTO tipoPosto) {
+        int[] lista = new int[4];
+
+        if (qtdade <= 0) {
+            lista[0] = -7;
+            return lista;
         }
-        double qtAlcool, qtGasolina, qtAditivo;
-        qtAlcool = qtdade*0.125*100;
-        qtGasolina = qtdade*0.7*100;
-        qtAditivo = qtdade*0.05*100;
-        tAditivo *=100;
-        tGasolina *=100;
-        tAlcool1 *=100;
-        tAlcool2 *=100;
-        switch(situacao){
-            case NORMAL->{
-                if(combustivelInsuficiente(qtAditivo, qtGasolina, qtAlcool)){
-                    aux[0] = -21;
-                    divide();
-                    return aux;
-                }
-                tAlcool1 -= qtAlcool;
-                tAlcool2 -= qtAlcool;
-                tGasolina -= qtGasolina;
-                tAditivo -= qtAditivo;
+        double qtdadeAlcool, qtdadeGasolina, qtdadeAditivo;
+        qtdadeAlcool = qtdade * 0.125 * 100;
+        qtdadeGasolina = qtdade * 0.7 * 100;
+        qtdadeAditivo = qtdade * 0.05 * 100;
+        tAditivo *= 100;
+        tGasolina *= 100;
+        tAlcool1 *= 100;
+        tAlcool2 *= 100;
+        if (situacao == SITUACAO.NORMAL){
+            if(tAlcool1<qtdadeAlcool || tAditivo<qtdadeAditivo || tGasolina<qtdadeGasolina){
+                lista[0] = -21;
+                tAlcool1 /= 100;
+                tAlcool2 /= 100;
+                tGasolina /= 100;
+                tAditivo /= 100;
+                return lista;
             }
-            case SOBRAVISO->{
-                if(tipoPosto==TIPOPOSTO.COMUM){
-                    qtAlcool /=2;
-                    qtGasolina/=2;
-                    qtAditivo /=2;
+            if (situacao == SITUACAO.SOBRAVISO){
+                if(tipoPosto == TIPOPOSTO.COMUM){
+                    qtdadeAlcool /= 2;
+                    qtdadeGasolina/= 2;
+                    qtdadeAditivo /= 2;
                 }
-                if(combustivelInsuficiente(qtAditivo, qtGasolina, qtAlcool)){
-                    aux[0] = -21;
-                    divide();
-                    return aux;
+                if(tAlcool1<qtdadeAlcool || tAditivo<qtdadeAditivo || tGasolina<qtdadeGasolina){
+                    lista[0] = -21;
+                    tAlcool1 /= 100;
+                    tAlcool2 /= 100;
+                    tGasolina /= 100;
+                    tAditivo /= 100;
+                    return lista;
                 }
-                tAlcool1 -= qtAlcool;
-                tAlcool2 -= qtAlcool;
-                tGasolina -= qtGasolina;
-                tAditivo -= qtAditivo;
+                tAlcool1 -= qtdadeAlcool;
+                tAlcool2 -= qtdadeAlcool;
+                tGasolina -= qtdadeGasolina;
+                tAditivo -= qtdadeAditivo;
             }
-            case EMERGENCIA->{
-                if(tipoPosto==TIPOPOSTO.COMUM){
-                    aux[0] = -14;
-                    divide();
-                    return aux;
+            if (situacao == SITUACAO.EMERGENCIA){
+                if(tipoPosto == TIPOPOSTO.COMUM){
+                    lista[0] = -14;
+                    tAlcool1 /= 100;
+                    tAlcool2 /= 100;
+                    tGasolina /= 100;
+                    tAditivo /= 100;
+                    return lista;
                 }
-                else{
-                    qtAlcool /=2;
-                    qtGasolina/=2;
-                    qtAditivo /=2;
-                    if(combustivelInsuficiente(qtAditivo, qtGasolina, qtAlcool)){
-                        aux[0] = -21;
-                        divide();
-                        return aux;
+                else {
+                    qtdadeAlcool /=2;
+                    qtdadeGasolina/=2;
+                    qtdadeAditivo /=2;
+                    if(tAlcool1<qtdadeAlcool || tAditivo<qtdadeAditivo || tGasolina<qtdadeGasolina){
+                        lista[0] = -21;
+                        tAlcool1 /= 100;
+                        tAlcool2 /= 100;
+                        tGasolina /= 100;
+                        tAditivo /= 100;
+                        return lista;
                     }
-                    tAlcool1 -= qtAlcool;
-                    tAlcool2 -= qtAlcool;
-                    tGasolina -= qtGasolina;
-                    tAditivo -= qtAditivo;
+                    tAlcool1 -= qtdadeAlcool;
+                    tAlcool2 -= qtdadeAlcool;
+                    tGasolina -= qtdadeGasolina;
+                    tAditivo -= qtdadeAditivo;
                 }
             }
         }
-        divide();
-        // erro no codigo original (nao tinha o definesituacao);
-        defineSituacao();
-        aux[0] = tAditivo;
-        aux[1] = tGasolina;
-        aux[2] = tAlcool1;
-        aux[3] = tAlcool2;
-        return aux;
-     } 
-
-     private void divide(){
-        tAlcool1 /=100;
-        tAlcool2 /=100;
-        tGasolina /=100;
-        tAditivo /=100;
-     }
-
-     private boolean combustivelInsuficiente(double qtAditivo, double qtGasolina, double qtAlcool){
-        if(tAlcool1<qtAlcool || tAditivo<qtAditivo || tGasolina<qtGasolina) return true;
-        return false;
-     }
-
-    private void verificaAditivo(int valor){
-        if(valor>MAX_ADITIVO || valor <0) 
-        throw new IllegalArgumentException("Valor inválido para o aditivo!", null);
+        tAlcool1 /= 100;
+        tAlcool2 /= 100;
+        tGasolina /= 100;
+        tAditivo /= 100;
+        lista[0] = tAditivo;
+        lista[1] = tGasolina;
+        lista[2] = tAlcool1;
+        lista[3] = tAlcool2;
+        return lista;
     }
 
-    private void verificaGasolina(int valor){
-        if(valor>MAX_GASOLINA || valor<0){
-            throw new IllegalArgumentException("Valor inválido para a gasolina!", null);
-        }
+    public int gettAditivo() {
+        return tAditivo;
     }
 
-    private void verificaAlcool(int a1, int a2){
-        if(a1!=a2 || a1<0 || 2*a1>MAX_ALCOOL){
-            throw new IllegalArgumentException("Valor inválido para o álcool!", null);
-        }
+    public int gettGasolina() {
+        return tGasolina;
     }
 
+    public int gettAlcool1() {
+        return tAlcool1;
+    }
 
+    public int gettAlcool2() {
+        return tAlcool2;
+    }
+
+    public SITUACAO getSituacao(){
+        return situacao;
+    }
 }
